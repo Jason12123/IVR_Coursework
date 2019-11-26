@@ -123,7 +123,32 @@ class image_converter:
       cx = 0
       cy = 0
     return np.array([cx,cy])
-  ######################################################################  
+  ###################################################################### 
+  def detect_target_obstacle_yz(self, image):
+    # Image thresholding
+    mask = cv2.inRange(image, (85,120,120), (90,180,255))
+    # Morphological transformations
+    kernel = np.ones((5,5), np.uint8)
+    #mask = cv2.dilate(mask, kernel, iterations=1)
+    # find contours
+    contours= cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[1]
+    tar_y = 0
+    obs_y = 0
+    tar_z = 0
+    obs_z = 0
+    if len(contours)>0:
+      for i in range(len(contours)):
+        hull = cv2.convexHull(contours[i])
+        if len(hull)<6:
+          obs_y = (sum(hull)/len(hull))[0][0]
+          obs_z = (sum(hull)/len(hull))[0][1]
+        elif len(hull)>8:
+          x,y,w,h = cv2.boundingRect(contours[i])
+          tar_y = x+w//2 
+          tar_z = y+h//2
+          #tar_z = y+h//2 - 1 # COMPENSATION
+    return tar_y, tar_z, obs_y, obs_z
+  ######################################################################
   # Recieve data from camera 1, process it, and publish
   def callback1(self,data):
     # Recieve the image
