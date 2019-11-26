@@ -149,6 +149,59 @@ class image_converter:
           #tar_z = y+h//2 - 1 # COMPENSATION
     return tar_y, tar_z, obs_y, obs_z
   ######################################################################
+  def pixel2meter(self, image):
+    #circle1Pos = self.detect_blue(image)
+    circle2Pos = self.detect_green(image)
+    circle3Pos = self.detect_red(image)
+    #dist = np.sum((circle2Pos - circle1Pos)**2)
+    #print(dist)
+    #pixel2meter_flag = 0
+    #return 3.0 / np.sqrt(dist)
+    dist = np.sum((circle3Pos - circle2Pos)**2)
+    print(circle3Pos)
+    print(circle2Pos)
+    print(dist)
+    self.pixel2meter_flag = self.pixel2meter_flag-1
+    return 1.8 / np.sqrt(dist)# with compensation
+  ######################################################################  
+  def detect_position_yz(self,image):####################
+    if(self.pixel2meter_flag!=0):
+      self.pixel2meter_ratio = self.pixel2meter(image)
+    # Obtain the centre of each blob
+    self.center_y = 0
+    self.center_z = 0
+    
+    yellow_y = self.detect_yellow(image)[0]
+    blue_y = self.detect_blue(image)[0]
+    green_y = self.detect_green(image)[0]
+    red_y = self.detect_red(image)[0]
+    
+    yellow_z = self.detect_yellow(image)[1]
+    blue_z = self.detect_blue(image)[1]
+    green_z = self.detect_green(image)[1]
+    red_z = self.detect_red(image)[1]
+    
+    if (blue_y != 0):
+      self.circle1Pos_y = self.pixel2meter_ratio * (blue_y - yellow_y)
+      self.circle1Pos_z = self.pixel2meter_ratio * (yellow_z - blue_z)
+    if (green_y != 0):
+      self.circle2Pos_y = self.pixel2meter_ratio * (green_y - yellow_y)
+      self.circle2Pos_z = self.pixel2meter_ratio * (yellow_z - green_z)
+    if (red_y != 0):
+      self.circle3Pos_y = self.pixel2meter_ratio * (red_y - yellow_y)
+      self.circle3Pos_z = self.pixel2meter_ratio * (yellow_z - red_z)
+      
+    tar_y, tar_z, obs_y, obs_z = self.detect_target_obstacle_yz(image)
+    if(tar_y != 0):
+      self.targetPos_y = self.pixel2meter_ratio * (tar_y - yellow_y)
+      self.targetPos_z = self.pixel2meter_ratio * (yellow_z - tar_z)
+    if(obs_y != 0):
+      self.obstaclePos_y = self.pixel2meter_ratio * (obs_y - yellow_y)
+      self.obstaclePos_z = self.pixel2meter_ratio * (yellow_z - obs_z)
+
+    return np.array([self.center_y,self.circle1Pos_y,self.circle2Pos_y,self.circle3Pos_y,self.center_z,self.circle1Pos_z,self.circle2Pos_z,self.circle3Pos_z]), self.targetPos_y, self.obstaclePos_y, self.targetPos_z, self.obstaclePos_z
+    
+  ######################################################################
   # Recieve data from camera 1, process it, and publish
   def callback1(self,data):
     # Recieve the image
