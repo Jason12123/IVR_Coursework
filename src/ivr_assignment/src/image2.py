@@ -13,10 +13,10 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class image_converter:
 
+  ######################################################################
   # Defines publisher and subscriber
   def __init__(self):
     # initialize the node named image_processing
-<<<<<<< HEAD
     rospy.init_node('image2_processing', anonymous=True)
     # initialize a publisher to send images from camera2 to a topic named image_topic2
     self.image_pub2 = rospy.Publisher("image_topic2",Image, queue_size = 1)
@@ -54,17 +54,6 @@ class image_converter:
     self.targetPos_x = 1.0
     
   ######################################################################
-=======
-    rospy.init_node('image_processing', anonymous=True)
-    # initialize a publisher to send images from camera2 to a topic named image_topic2
-    self.image_pub2 = rospy.Publisher("image_topic2",Image, queue_size = 1)
-    # initialize a subscriber to recieve messages rom a topic named /robot/camera1/image_raw and use callback function to recieve data
-    self.image_sub2 = rospy.Subscriber("/camera2/robot/image_raw",Image,self.callback2)
-    # initialize the bridge between openCV and ROS
-    self.bridge = CvBridge()
-
-
->>>>>>> 1fb65a7c127c7a3aea38346cf91390eb0b5e5e9e
   # Recieve data, process it, and publish
   def callback2(self,data):
     # Recieve the image
