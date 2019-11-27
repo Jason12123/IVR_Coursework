@@ -209,18 +209,62 @@ class image_converter:
       self.cv_image1 = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
       print(e)
-    
-    # Uncomment if you want to save the image
-    #cv2.imwrite('image_copy.png', cv_image)
 
-    im1=cv2.imshow('window1', self.cv_image1)
-    cv2.waitKey(1)
-    # Publish the results
-    try: 
-      self.image_pub1.publish(self.bridge.cv2_to_imgmsg(self.cv_image1, "bgr8"))
-    except CvBridgeError as e:
-      print(e)
+    # initialize
+    if(self.initIter>0):
+      print("yeah")
+      self.robot_joint1_pub.publish(0)
+      self.robot_joint2_pub.publish(0.0)
+      self.robot_joint3_pub.publish(0.0)
+      self.robot_joint4_pub.publish(0.0)
+      self.n = np.array([0,1,0])
+      self.initIter = self.initIter-1
+      print("initIter = {}".format(self.initIter))
+    else:
+      spheresPosition_yz, targetPosition_y, obstaclePosition_y, targetPosition_z, obstaclePosition_z = self.detect_position_yz(self.cv_image1)
+      
+      spheresPosition_y = spheresPosition_yz[0:4]
+      #print(spheresPosition_y)
+      spheresPosition_z = spheresPosition_yz[4:8]
+      #print(spheresPosition_z)
 
+      im1=cv2.imshow('window1', self.cv_image1)
+      cv2.waitKey(1)
+      
+      self.spheres_y = Float64MultiArray()
+      self.spheres_y.data = spheresPosition_y
+      self.spheres_z = Float64MultiArray()
+      self.spheres_z.data = spheresPosition_z
+      
+      self.target_y = Float64()
+      self.target_y.data = targetPosition_y
+      
+      self.obstacle_y = Float64()
+      self.obstacle_y.data = obstaclePosition_y
+      
+      self.target_z = Float64()
+      self.target_z.data = targetPosition_z # WITHOUT OFFSET
+      #self.target_z.data = targetPosition_z+1.05 # WITH OFFSET
+      
+      self.obstacle_z = Float64()
+      self.obstacle_z.data = obstaclePosition_z # WITHOUT OFFSET
+      #self.obstacle_z.data = obstaclePosition_z+1.05 # WITH OFFSET
+      
+      
+      # Publish the results
+      try: 
+        self.image_pub1.publish(self.bridge.cv2_to_imgmsg(self.cv_image1, "bgr8"))
+        self.spheres_y_pub.publish(self.spheres_y)
+        self.spheres_z_pub.publish(self.spheres_z)
+        self.target_y_pub.publish(self.target_y)
+        self.obstacle_y_pub.publish(self.obstacle_y)
+        self.target_z_pub.publish(self.target_z)
+        self.obstacle_z_pub.publish(self.obstacle_z)
+      except CvBridgeError as e:
+        print(e)
+
+######################################################################
+###################################################################### 
 # call the class
 def main(args):
   ic = image_converter()
