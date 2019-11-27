@@ -12,7 +12,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 
 class image_converter:
-
+  ######################################################################
   # Defines publisher and subscriber
   def __init__(self):
     # initialize the node named image_processing
@@ -123,7 +123,7 @@ class image_converter:
       cx = 0
       cy = 0
     return np.array([cx,cy])
-  ###################################################################### 
+  ######################################################################  
   def detect_target_obstacle_yz(self, image):
     # Image thresholding
     mask = cv2.inRange(image, (85,120,120), (90,180,255))
@@ -148,7 +148,7 @@ class image_converter:
           tar_z = y+h//2
           #tar_z = y+h//2 - 1 # COMPENSATION
     return tar_y, tar_z, obs_y, obs_z
-  ######################################################################
+  ######################################################################  
   def pixel2meter(self, image):
     #circle1Pos = self.detect_blue(image)
     circle2Pos = self.detect_green(image)
@@ -264,7 +264,7 @@ class image_converter:
         print(e)
 
 ######################################################################
-###################################################################### 
+######################################################################    
 # call the class
 def main(args):
   ic = image_converter()
