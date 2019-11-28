@@ -54,6 +54,70 @@ class image_converter:
     self.targetPos_x = 1.0
     
   ######################################################################
+  def detect_red (self, image):
+    # Image thresholding
+    mask = cv2.inRange(image, (0,0,100), (0,0,255))
+    # Morphological transformations
+    kernel = np.ones((5,5), np.uint8)
+    mask = cv2.dilate(mask, kernel, iterations=3)
+    # Obtain the moments
+    try: 
+      M = cv2.moments(mask)
+      cx = int(M['m10'] / M['m00'])
+      cy = int(M['m01'] / M['m00'])
+    except:
+      cx = 0
+      cy = 0
+    return np.array([cx,cy])
+  ######################################################################  
+  def detect_yellow (self, image):
+    # Image thresholding
+    mask = cv2.inRange(image, (0,100,100), (0,255,255))
+    # Morphological transformations
+    kernel = np.ones((5,5), np.uint8)
+    mask = cv2.dilate(mask, kernel, iterations=3)
+    # Obtain the moments
+    try: 
+      M = cv2.moments(mask)
+      cx = int(M['m10'] / M['m00'])
+      cy = int(M['m01'] / M['m00'])
+    except:
+      cx = 0
+      cy = 0
+    return np.array([cx,cy])
+  ######################################################################  
+  def detect_blue (self, image):
+    # Image thresholding
+    mask = cv2.inRange(image, (100,0,0), (255,0,0))
+    # Morphological transformations
+    kernel = np.ones((5,5), np.uint8)
+    mask = cv2.dilate(mask, kernel, iterations=3)
+    # Obtain the moments
+    try: 
+      M = cv2.moments(mask)
+      cx = int(M['m10'] / M['m00'])
+      cy = int(M['m01'] / M['m00'])
+    except:
+      cx = 0
+      cy = 0
+    return np.array([cx,cy])
+  ######################################################################  
+  def detect_green (self, image):
+    # Image thresholding
+    mask = cv2.inRange(image, (0,100,0), (0,255,0))
+    # Morphological transformations
+    kernel = np.ones((5,5), np.uint8)
+    mask = cv2.dilate(mask, kernel, iterations=3)
+    # Obtain the moments
+    try: 
+      M = cv2.moments(mask)
+      cx = int(M['m10'] / M['m00'])
+      cy = int(M['m01'] / M['m00'])
+    except:
+      cx = 0
+      cy = 0
+    return np.array([cx,cy])
+  ######################################################################
   # Recieve data, process it, and publish
   def callback2(self,data):
     # Recieve the image
