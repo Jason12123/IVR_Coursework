@@ -12,10 +12,6 @@ from cv_bridge import CvBridge, CvBridgeError
 
 
 class image_converter:
-<<<<<<< HEAD
-=======
-
->>>>>>> 4945bcb0ab263b7942ba01974bda1823137411ee
   ######################################################################
   # Defines publisher and subscriber
   def __init__(self):
@@ -120,7 +116,6 @@ class image_converter:
       cx = 0
       cy = 0
     return np.array([cx,cy])
-<<<<<<< HEAD
   ######################################################################  
   def pixel2meter(self, image):
     #circle1Pos = self.detect_blue(image)
@@ -182,17 +177,12 @@ class image_converter:
 
   ######################################################################
   # Recieve data from camera 2, process it, and publish
-=======
-  ######################################################################
-  # Recieve data, process it, and publish
->>>>>>> 4945bcb0ab263b7942ba01974bda1823137411ee
   def callback2(self,data):
     # Recieve the image
     try:
       self.cv_image2 = self.bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
       print(e)
-<<<<<<< HEAD
       
     # initialize
     if(self.initIter>0):
@@ -231,19 +221,6 @@ class image_converter:
 
 ######################################################################    
 ######################################################################
-=======
-    # Uncomment if you want to save the image
-    #cv2.imwrite('image_copy.png', cv_image)
-    im2=cv2.imshow('window2', self.cv_image2)
-    cv2.waitKey(1)
-
-    # Publish the results
-    try: 
-      self.image_pub2.publish(self.bridge.cv2_to_imgmsg(self.cv_image2, "bgr8"))
-    except CvBridgeError as e:
-      print(e)
-
->>>>>>> 4945bcb0ab263b7942ba01974bda1823137411ee
 # call the class
 def main(args):
   ic = image_converter()
